@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CueMate — Transparent teleprompter for meetings</title>
+  <meta name="description" content="A transparent teleprompter overlay that sits on top of your video calls. Read your notes while maintaining eye contact. No accounts, no cloud, no subscription.">
+  <meta property="og:title" content="CueMate — Transparent teleprompter for meetings">
+  <meta property="og:description" content="Stay on script. Eyes on them. A transparent overlay teleprompter for macOS.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cuemate.co">
+  <link rel="icon" type="image/png" href="app-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root {
+      --coral: #e67e51;
+      --teal: #4a9b9b;
+      --amber: #e6a651;
+      --bg: #0b0b0b;
+      --bg-card: #131313;
+      --text: #F5F2EE;
+      --text-muted: #8a8580;
+      --text-dim: #5a5550;
+      --mono: 'DM Mono', 'SF Mono', Menlo, monospace;
+      --serif: 'Newsreader', Georgia, serif;
+    }
+
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    a { color: var(--coral); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(11,11,11,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .nav-brand img { width: 28px; height: 28px; border-radius: 6px; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      font-size: 13px;
+    }
+
+    .nav-links a { color: var(--text-muted); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none !important;
+    }
+
+    .btn-primary { background: var(--coral); color: #fff !important; }
+    .btn-primary:hover { background: #d4714a; transform: translateY(-1px); }
+    .btn-ghost { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid rgba(255,255,255,0.08); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+
+    /* ─── SNAP SECTIONS ─── */
+    .snap-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      display: flex;
+      align-items: center;
+      min-height: 100vh;
+      padding: 120px 48px 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 80px;
+    }
+
+    .hero-text { flex: 1.2; min-width: 0; }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(44px, 5.5vw, 74px);
+      font-weight: 400;
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      margin-bottom: 32px;
+    }
+
+    .hero h1 em { font-style: italic; color: var(--coral); }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 440px;
+      margin-bottom: 44px;
+    }
+
+    .hero-actions { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .hero-meta { font-size: 13px; color: var(--text-dim); }
+
+    .hero-mockup { flex: 1; min-width: 0; display: flex; justify-content: center; }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-dim);
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      animation: fadeUp 0.8s ease 0.6s both;
+      transition: opacity 0.3s;
+    }
+
+    .scroll-hint:hover { opacity: 0.8; }
+
+    .section-hint { animation: none; opacity: 1; }
+
+    .scroll-hint svg {
+      animation: bobDown 2s ease-in-out infinite;
+    }
+
+    @keyframes bobDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ─── MOCKUP ─── */
+    .mockup-wrapper { width: 420px; perspective: 1200px; }
+
+    .mockup-screen {
+      background: #1c1c1c;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 40px 80px rgba(0,0,0,0.5), 0 0 120px rgba(230,126,81,0.06);
+      transform: rotateY(-4deg) rotateX(2deg);
+      transition: transform 0.4s ease;
+    }
+
+    .mockup-screen:hover { transform: rotateY(0deg) rotateX(0deg); }
+
+    .mockup-call {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px; padding: 3px;
+      background: #111;
+      aspect-ratio: 16/10;
+    }
+
+    .mockup-participant { border-radius: 6px; position: relative; overflow: hidden; }
+    .mockup-participant:nth-child(1) { background: linear-gradient(135deg, #1a3d3d, #0f2a2a); }
+    .mockup-participant:nth-child(2) { background: linear-gradient(135deg, #3d2218, #2a1610); }
+    .mockup-participant:nth-child(3) { background: linear-gradient(135deg, #3d2f18, #2a2010); }
+    .mockup-participant:nth-child(4) { background: linear-gradient(135deg, #2a3d3d, #1a2a2a); }
+    .mockup-participant::after {
+      content: ''; position: absolute;
+      width: 36px; height: 36px; border-radius: 50%;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .mockup-overlay { position: absolute; top: 20px; left: 20px; right: 20px; }
+
+    .mockup-strip {
+      background: rgba(0,0,0,0.88);
+      border-radius: 10px 10px 0 0;
+      padding: 8px 14px;
+      display: flex; align-items: center; gap: 10px;
+      border-top: 2px solid var(--coral);
+    }
+
+    .mockup-drag { color: var(--coral); font-size: 14px; opacity: 0.7; line-height: 1; }
+    .mockup-filename { font-size: 11px; opacity: 0.6; flex: 1; }
+    .mockup-btn { font-size: 9px; background: rgba(255,255,255,0.12); padding: 3px 8px; border-radius: 3px; opacity: 0.8; }
+
+    .mockup-teleprompter {
+      background: rgba(0,0,0,0.75);
+      border-radius: 0 0 10px 10px;
+      padding: 16px 18px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, #000 25%, #000 50%, rgba(0,0,0,0.3) 100%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, #000 25%, #000 50%, rgba(0,0,0,0.3) 100%);
+    }
+
+    .mockup-line { height: 6px; border-radius: 3px; margin-bottom: 10px; background: rgba(255,255,255,0.15); }
+    .mockup-line.active { background: rgba(255,255,255,0.85); height: 7px; }
+    .mockup-line:nth-child(1) { width: 85%; opacity: 0.5; }
+    .mockup-line:nth-child(2) { width: 70%; opacity: 0.6; }
+    .mockup-line.active { width: 92%; opacity: 1; }
+    .mockup-line:nth-child(4) { width: 78%; }
+    .mockup-line:nth-child(5) { width: 60%; opacity: 0.7; }
+    .mockup-cue { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--amber); opacity: 0.6; margin-bottom: 6px; }
+    .mockup-container { position: relative; }
+
+    .mockup-teleprompter .mockup-line { animation: scrollUp 4s ease-in-out infinite; }
+    @keyframes scrollUp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+    /* ─── PRODUCT STORY ─── */
+    .story {
+      padding: 0 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .story-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      padding: 40px 0;
+    }
+
+    .story-block.flipped .story-visual { order: -1; }
+
+    .story-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .story-label.coral { color: var(--coral); }
+    .story-label.teal { color: var(--teal); }
+    .story-label.amber { color: var(--amber); }
+
+    .story-heading {
+      font-family: var(--serif);
+      font-size: clamp(26px, 3vw, 38px);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .story-body {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 420px;
+    }
+
+    .story-body strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ─── VISUAL PANELS ─── */
+    .visual-panel {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .visual-panel .code-block {
+      font-size: 14px;
+      line-height: 2.2;
+      color: var(--text-muted);
+    }
+
+    .visual-panel .code-block .cue {
+      color: var(--teal);
+      opacity: 0.7;
+    }
+
+    .visual-panel .code-block .text-line {
+      color: var(--text);
+      opacity: 0.8;
+    }
+
+    .visual-panel .code-block .label {
+      display: inline-block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 12px;
+      position: relative;
+      top: -1px;
+    }
+
+    .visual-panel .code-block .label.teal { color: var(--teal); background: rgba(74,155,155,0.1); }
+    .visual-panel .code-block .label.amber { color: var(--amber); background: rgba(230,166,81,0.1); }
+    .visual-panel .code-block .label.coral { color: var(--coral); background: rgba(230,126,81,0.1); }
+
+    /* Keys visual */
+    .keys-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px 20px;
+      align-items: center;
+    }
+
+    .keys-grid kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 14px;
+      background: rgba(255,255,255,0.06);
+      min-width: 38px;
+      height: 38px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-bottom-width: 3px;
+      color: var(--text);
+    }
+
+    .keys-grid .key-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Fake presentation background */
+    .fake-presentation {
+      background: linear-gradient(135deg, #1a2a3a, #162030);
+      padding: 32px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      aspect-ratio: 16/10;
+    }
+
+    .fake-slide-heading {
+      width: 45%;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.15);
+      margin-top: 8px;
+    }
+
+    .fake-slide-subtitle {
+      width: 30%;
+      height: 5px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    .fake-slide-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      flex: 1;
+      padding: 12px 0 4px;
+    }
+
+    .fake-bar {
+      width: 36px;
+      border-radius: 4px 4px 0 0;
+      background: rgba(74,155,155,0.35);
+    }
+
+    .fake-bar:nth-child(3) { background: rgba(230,126,81,0.45); }
+
+    .fake-slide-label {
+      width: 35%;
+      height: 5px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* Notes overlay sitting on top of the presentation */
+    .notes-mockup-overlay {
+      position: absolute;
+      top: 16px; left: 16px; right: 16px; bottom: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .notes-mockup-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: rgba(0,0,0,0.75);
+      border-radius: 0 0 10px 10px;
+      padding: 8px;
+      flex: 1;
+    }
+
+    .notes-mockup-page {
+      background: rgba(0,0,0,0.6);
+      border-radius: 6px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .notes-mockup-page.active { border-color: rgba(230,166,81,0.2); }
+
+    .notes-page-line {
+      height: 5px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.12);
+      margin-bottom: 8px;
+    }
+
+    .notes-page-line:nth-child(1) { width: 70%; }
+    .notes-page-line:nth-child(2) { width: 90%; }
+    .notes-page-line:nth-child(3) { width: 55%; }
+    .notes-page-line:nth-child(4) { width: 80%; }
+    .notes-page-line:nth-child(5) { width: 40%; }
+
+    .notes-mockup-page:last-child { display: flex; flex-direction: column; align-items: flex-end; }
+    .notes-mockup-page.active .notes-page-line { background: rgba(255,255,255,0.22); }
+
+    /* ─── CTA ─── */
+    .cta-inner {
+      text-align: center;
+      padding: 80px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .cta-inner .section-heading {
+      font-family: var(--serif);
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .cta-inner .section-heading em { font-style: italic; color: var(--coral); }
+
+    .cta-desc {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 44px;
+      line-height: 1.7;
+    }
+
+    .cta-actions { display: flex; justify-content: center; gap: 16px; margin-bottom: 20px; }
+    .cta-meta { font-size: 14px; color: var(--text-dim); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      font-size: 12px;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .footer-brand { display: flex; align-items: center; gap: 10px; }
+    .footer-brand img { width: 24px; height: 24px; border-radius: 50%; }
+    .footer-brand a { color: var(--text-muted); }
+
+    /* ─── ANIMATIONS ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+
+    .hero-text { animation: fadeUp 0.8s ease both; }
+    .hero-mockup { animation: fadeUp 0.8s ease 0.2s both; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .hero { flex-direction: column; gap: 60px; padding-top: 100px; }
+      .hero-mockup { width: 100%; }
+      .mockup-wrapper { width: 100%; max-width: 400px; }
+      .story-block { grid-template-columns: 1fr; gap: 40px; }
+      .story-block.flipped .story-visual { order: 0; }
+      nav { padding: 16px 24px; }
+      .hero, .story, .cta-inner, footer { padding-left: 24px; padding-right: 24px; }
+      .nav-links span { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+      .mockup-screen { transform: none; }
+      .mockup-screen:hover { transform: none; }
+      .notes-visual { grid-template-columns: 1fr; }
+    }
+
+    /* ─── GRAIN ─── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <img src="app-icon.png" alt="CueMate">
+      <span>CueMate</span>
+    </div>
+    <div class="nav-links">
+      <a href="#how-it-works">How it works</a>
+      <a href="#download" class="btn btn-primary">Download</a>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <div class="snap-section" style="position:relative">
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Stay on script.<br><em>Eyes on them.</em></h1>
+      <p class="hero-sub">
+        A transparent teleprompter that floats over your video calls.
+        Your notes scroll past while you look straight at the camera.
+      </p>
+      <div class="hero-actions">
+        <a href="#download" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v10m0 0l-3.5-3.5M8 11l3.5-3.5M2 14h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download for macOS
+        </a>
+        <a href="#how-it-works" class="btn btn-ghost">See how it works</a>
+      </div>
+      <p class="hero-meta">Free. No account. No cloud. Just a 5MB app.</p>
+    </div>
+    <div class="hero-mockup">
+      <div class="mockup-wrapper">
+        <div class="mockup-container">
+          <div class="mockup-screen">
+            <div class="mockup-call">
+              <div class="mockup-participant"></div>
+              <div class="mockup-participant"></div>
+              <div class="mockup-participant"></div>
+              <div class="mockup-participant"></div>
+            </div>
+            <div class="mockup-overlay">
+              <div class="mockup-strip">
+                <span class="mockup-drag">&#x2807;</span>
+                <span class="mockup-filename">pitch-notes.md</span>
+                <span class="mockup-btn">Play</span>
+                <span class="mockup-btn">0.6x</span>
+              </div>
+              <div class="mockup-teleprompter">
+                <div class="mockup-line"></div>
+                <div class="mockup-line"></div>
+                <div class="mockup-line active"></div>
+                <div class="mockup-cue">&#9656; slow</div>
+                <div class="mockup-line"></div>
+                <div class="mockup-line"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint" id="scroll-hint">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-5-5m5 5l5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  </div>
+
+  <!-- ─── STORY BLOCKS ─── -->
+  <div class="snap-section" id="how-it-works" style="position:relative">
+  <div class="story">
+    <div class="story-block reveal">
+      <div class="story-text">
+        <p class="story-label coral">Write in markdown</p>
+        <h2 class="story-heading">Your talking points,<br>with built-in pacing</h2>
+        <p class="story-body">
+          Write your script in any text editor. Add HTML comments to
+          control how fast the text scrolls. <strong>Slow down for key points.
+          Speed up through transitions. Pause for emphasis.</strong>
+        </p>
+      </div>
+      <div class="story-visual">
+        <div class="visual-panel">
+          <div class="code-block">
+            <div class="text-line">We've grown 3x this quarter.</div>
+            <div><span class="cue">&lt;!-- pause 2 --&gt;</span> <span class="label amber">pause</span></div>
+            <div class="text-line">Here's how we did it...</div>
+            <div><span class="cue">&lt;!-- slow --&gt;</span> <span class="label amber">slow</span></div>
+            <div class="text-line">Three key decisions made the</div>
+            <div class="text-line">difference.</div>
+            <div><span class="cue">&lt;!-- fast --&gt;</span> <span class="label teal">fast</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint section-hint"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-5-5m5 5l5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+
+  <div class="snap-section" style="position:relative">
+  <div class="story">
+    <div class="story-block flipped reveal">
+      <div class="story-text">
+        <p class="story-label teal">Keyboard-first</p>
+        <h2 class="story-heading">No mouse needed<br>during your call</h2>
+        <p class="story-body">
+          Play, pause, adjust speed, switch modes.
+          <strong>Every action has a hotkey.</strong>
+          Press <kbd style="font-family:var(--mono);font-size:12px;background:rgba(255,255,255,0.06);padding:2px 7px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);">T</kbd>
+          and your mouse passes right through to the window below.
+        </p>
+      </div>
+      <div class="story-visual">
+        <div class="visual-panel">
+          <div class="keys-grid">
+            <kbd>Space</kbd> <span class="key-desc">Play / pause scroll</span>
+            <kbd>&#8593; &#8595;</kbd> <span class="key-desc">Adjust speed</span>
+            <kbd>N</kbd> <span class="key-desc">Switch to notes mode</span>
+            <kbd>T</kbd> <span class="key-desc">Click-through toggle</span>
+            <kbd>O</kbd> <span class="key-desc">Open a file</span>
+            <kbd>Esc</kbd> <span class="key-desc">Expand / collapse</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint section-hint"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-5-5m5 5l5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+
+  <div class="snap-section" style="position:relative">
+  <div class="story">
+    <div class="story-block reveal">
+      <div class="story-text">
+        <p class="story-label amber">Notes mode</p>
+        <h2 class="story-heading">Static pages for<br>longer meetings</h2>
+        <p class="story-body">
+          Not every meeting needs a teleprompter. Switch to notes mode
+          for <strong>static reference pages you flip through with arrow keys.</strong>
+          Use <code style="color:var(--amber);background:rgba(230,166,81,0.1);padding:2px 6px;border-radius:3px;font-size:13px">---</code> in your markdown as page breaks.
+          Show pages on the left, right, or both sides.
+        </p>
+      </div>
+      <div class="story-visual">
+        <div class="mockup-wrapper">
+          <div class="mockup-container">
+            <div class="mockup-screen">
+              <!-- Fake presentation behind -->
+              <div class="fake-presentation">
+                <div class="fake-slide-heading"></div>
+                <div class="fake-slide-subtitle"></div>
+                <div class="fake-slide-chart">
+                  <div class="fake-bar" style="height:40%"></div>
+                  <div class="fake-bar" style="height:65%"></div>
+                  <div class="fake-bar" style="height:85%"></div>
+                  <div class="fake-bar" style="height:55%"></div>
+                </div>
+                <div class="fake-slide-label"></div>
+              </div>
+              <!-- CueMate notes overlay -->
+              <div class="notes-mockup-overlay">
+                <div class="mockup-strip">
+                  <span class="mockup-drag">&#x2807;</span>
+                  <span class="mockup-filename">meeting-notes.md</span>
+                  <span class="mockup-btn">Notes</span>
+                  <span class="mockup-btn">2/5</span>
+                </div>
+                <div class="notes-mockup-panels">
+                  <div class="notes-mockup-page active">
+                    <div class="notes-page-line"></div>
+                    <div class="notes-page-line"></div>
+                    <div class="notes-page-line"></div>
+                    <div class="notes-page-line"></div>
+                    <div class="notes-page-line"></div>
+                  </div>
+                  <div class="notes-mockup-page">
+                    <div class="notes-page-line" style="opacity:0.5"></div>
+                    <div class="notes-page-line" style="opacity:0.5"></div>
+                    <div class="notes-page-line" style="opacity:0.5"></div>
+                    <div class="notes-page-line" style="opacity:0.5"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint section-hint"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14m0 0l-5-5m5 5l5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+
+  <!-- ─── DOWNLOAD ─── -->
+  <div class="snap-section" id="download">
+  <div class="cta-inner">
+    <h2 class="section-heading reveal">Write your script.<br>Open the app.<br><em>Start talking.</em></h2>
+    <p class="cta-desc reveal">Your files never leave your machine. No account, no subscription.</p>
+    <div class="cta-actions reveal">
+      <a href="#" class="btn btn-primary" style="padding: 14px 32px; font-size: 15px;">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1v10m0 0l-3.5-3.5M8 11l3.5-3.5M2 14h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download for macOS
+      </a>
+    </div>
+    <p class="cta-meta reveal">macOS 12+ &middot; Apple Silicon &middot; 5MB</p>
+  </div>
+
+  <footer>
+    <div class="footer-brand">
+      <img src="holen-logo.png" alt="Holen Ventures">
+      <span>Built by <a href="https://holenventures.com" target="_blank" rel="noopener">Holen Ventures</a></span>
+    </div>
+    <span>&copy; 2026 Holen Ventures</span>
+  </footer>
+  </div>
+
+  <script>
+    // Snap scrolling between sections
+    const hint = document.getElementById('scroll-hint');
+    const sections = [...document.querySelectorAll('.snap-section')];
+    let isSnapping = false;
+
+    function closestSection() {
+      const scrollY = window.scrollY + window.innerHeight * 0.3;
+      let closest = 0;
+      for (let i = 0; i < sections.length; i++) {
+        if (sections[i].offsetTop <= scrollY) closest = i;
+      }
+      return closest;
+    }
+
+    function snapTo(idx) {
+      if (idx < 0 || idx >= sections.length || isSnapping) return;
+      isSnapping = true;
+      sections[idx].scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => { isSnapping = false; }, 800);
+    }
+
+    hint.addEventListener('click', () => snapTo(1));
+
+    window.addEventListener('wheel', (e) => {
+      if (isSnapping) { e.preventDefault(); return; }
+      const current = closestSection();
+      if (e.deltaY > 30) {
+        e.preventDefault();
+        snapTo(current + 1);
+      } else if (e.deltaY < -30) {
+        e.preventDefault();
+        snapTo(current - 1);
+      }
+    }, { passive: false });
+
+    // Touch support
+    let touchStartY = 0;
+    window.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener('touchend', e => {
+      const dy = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(dy) > 50) {
+        const current = closestSection();
+        if (dy > 0) snapTo(current + 1);
+        else snapTo(current - 1);
+      }
+    }, { passive: true });
+
+    // Hide scroll hint once past hero
+    window.addEventListener('scroll', () => {
+      hint.style.opacity = window.scrollY > 100 ? '0' : '';
+    }, { passive: true });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
