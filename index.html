@@ -590,6 +590,7 @@
         <a href="#how-it-works" class="btn btn-ghost">See how it works</a>
       </div>
       <p class="hero-meta">Free. No account. No cloud. Just a 5MB app.</p>
+      <p class="hero-meta" style="margin-top:6px;font-size:11px;opacity:0.5">macOS may warn about an unsigned app. <a href="#install-note" style="color:inherit;text-decoration:underline">Fix in one command.</a></p>
     </div>
     <div class="hero-mockup">
       <div class="mockup-wrapper">
@@ -762,6 +763,11 @@
       </a>
     </div>
     <p class="cta-meta reveal">macOS 12+ &middot; Apple Silicon &middot; 5MB</p>
+    <div id="install-note" class="reveal" style="margin-top:32px;max-width:440px;margin-left:auto;margin-right:auto;text-align:left;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:20px 24px;font-size:13px;line-height:1.7;color:rgba(255,255,255,0.5)">
+      <strong style="color:rgba(255,255,255,0.7)">First launch on macOS</strong><br>
+      macOS may say the app is "damaged" because it isn't signed yet. Open Terminal and run:<br>
+      <code style="display:block;margin-top:10px;padding:10px 14px;background:rgba(0,0,0,0.4);border-radius:6px;font-size:12px;color:#e67e51;font-family:'SF Mono',Menlo,monospace">xattr -cr /Applications/cuemate.app</code>
+    </div>
   </div>
 
   <footer>
