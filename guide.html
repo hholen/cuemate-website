@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide — CueMate</title>
+  <meta name="description" content="Complete guide to CueMate: keyboard shortcuts, speed cues, pause cues, and tips for using the transparent teleprompter overlay on macOS.">
+  <meta property="og:title" content="Guide — CueMate">
+  <meta property="og:description" content="Keyboard shortcuts, speed cues, and everything you need to present like a pro with CueMate.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cuemate.co/guide">
+  <link rel="icon" type="image/png" href="app-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root {
+      --coral: #e67e51;
+      --teal: #4a9b9b;
+      --amber: #e6a651;
+      --bg: #0b0b0b;
+      --bg-card: #131313;
+      --text: #F5F2EE;
+      --text-muted: #8a8580;
+      --text-dim: #5a5550;
+      --mono: 'DM Mono', 'SF Mono', Menlo, monospace;
+      --serif: 'Newsreader', Georgia, serif;
+    }
+
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    a { color: var(--coral); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(11,11,11,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      font-size: 15px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-brand:hover { text-decoration: none; }
+    .nav-brand img { width: 28px; height: 28px; border-radius: 6px; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      font-size: 13px;
+    }
+
+    .nav-links a { color: var(--text-muted); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-links a.active { color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none !important;
+    }
+
+    .btn-primary { background: var(--coral); color: #fff !important; }
+    .btn-primary:hover { background: #d4714a; transform: translateY(-1px); }
+
+    /* ─── LAYOUT ─── */
+    .guide-container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 140px 48px 80px;
+    }
+
+    /* ─── HERO ─── */
+    .guide-hero {
+      margin-bottom: 80px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .guide-hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(44px, 5vw, 64px);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+    }
+
+    .guide-hero p {
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ─── SECTIONS ─── */
+    .guide-section {
+      margin-bottom: 72px;
+    }
+
+    .guide-section h2 {
+      font-family: var(--serif);
+      font-size: clamp(24px, 3vw, 32px);
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+
+    .guide-section h2 .accent { color: var(--coral); }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+
+    /* ─── TABLE ─── */
+    .shortcut-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .shortcut-table thead th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      font-weight: 500;
+      padding: 0 0 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .shortcut-table tbody td {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: middle;
+    }
+
+    .shortcut-table tbody tr:last-child td { border-bottom: none; }
+
+    .shortcut-table td:first-child { width: 120px; }
+    .shortcut-table td:last-child { width: 130px; }
+
+    .shortcut-table kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 13px;
+      background: rgba(255,255,255,0.06);
+      min-width: 34px;
+      height: 32px;
+      padding: 0 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-bottom-width: 3px;
+      color: var(--text);
+    }
+
+    .shortcut-table .action { color: var(--text-muted); }
+
+    .mode-tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .mode-tag.teleprompter { color: var(--coral); background: rgba(230,126,81,0.1); }
+    .mode-tag.notes { color: var(--amber); background: rgba(230,166,81,0.1); }
+    .mode-tag.both { color: var(--teal); background: rgba(74,155,155,0.1); }
+
+    /* ─── CODE BLOCKS ─── */
+    .cue-block {
+      background: #141414;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 2;
+    }
+
+    .cue-line {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .cue-syntax {
+      color: var(--teal);
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+
+    .cue-desc {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .cue-sep {
+      color: var(--text-dim);
+      margin: 0 4px;
+    }
+
+    /* ─── EXAMPLE BLOCK ─── */
+    .example-block {
+      background: #141414;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .example-header {
+      padding: 12px 24px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .example-code {
+      padding: 24px;
+      font-size: 13px;
+      line-height: 2;
+      overflow-x: auto;
+    }
+
+    .example-code .heading { color: var(--text); font-weight: 500; }
+    .example-code .cue { color: var(--teal); }
+    .example-code .text { color: var(--text-muted); }
+    .example-code .rule { color: var(--amber); }
+    .example-code .blank { display: block; height: 26px; }
+
+    /* ─── INLINE NOTE ─── */
+    .inline-note {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-top: 16px;
+    }
+
+    .inline-note strong { color: var(--text); font-weight: 500; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 48px;
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      font-size: 12px;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .footer-brand { display: flex; align-items: center; gap: 10px; }
+    .footer-brand img { width: 24px; height: 24px; border-radius: 50%; }
+    .footer-brand a { color: var(--text-muted); }
+
+    /* ─── ANIMATIONS ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .guide-container { padding: 120px 24px 60px; }
+    }
+
+    @media (max-width: 600px) {
+      .shortcut-table td:last-child { width: auto; }
+      .shortcut-table { font-size: 13px; }
+      .shortcut-table kbd { font-size: 12px; min-width: 28px; height: 28px; padding: 0 7px; }
+      .cue-line { flex-direction: column; align-items: flex-start; gap: 2px; }
+    }
+
+    /* ─── GRAIN ─── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="nav-brand">
+      <img src="app-icon.png" alt="CueMate">
+      <span>CueMate</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" >Home</a>
+      <a href="/guide" class="active">Guide</a>
+      <a href="https://github.com/hholen/cuemate/releases/latest/download/CueMate.dmg" class="btn btn-primary">Download</a>
+    </div>
+  </nav>
+
+  <div class="guide-container">
+
+    <!-- ─── HERO ─── -->
+    <div class="guide-hero">
+      <h1>Guide</h1>
+      <p>Everything you need to present like a pro.</p>
+    </div>
+
+    <!-- ─── KEYBOARD SHORTCUTS ─── -->
+    <section class="guide-section reveal">
+      <h2>Keyboard <span class="accent">shortcuts</span></h2>
+      <p class="section-desc">Every action has a hotkey. No mouse needed during your call.</p>
+      <table class="shortcut-table">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Action</th>
+            <th>Mode</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><kbd>Space</kbd></td>
+            <td class="action">Play / Pause</td>
+            <td><span class="mode-tag teleprompter">Teleprompter</span></td>
+          </tr>
+          <tr>
+            <td><kbd>&#8593;</kbd></td>
+            <td class="action">Speed up (nudge)</td>
+            <td><span class="mode-tag teleprompter">Teleprompter</span></td>
+          </tr>
+          <tr>
+            <td><kbd>&#8595;</kbd></td>
+            <td class="action">Slow down (nudge)</td>
+            <td><span class="mode-tag teleprompter">Teleprompter</span></td>
+          </tr>
+          <tr>
+            <td><kbd>R</kbd></td>
+            <td class="action">Reset to top</td>
+            <td><span class="mode-tag teleprompter">Teleprompter</span></td>
+          </tr>
+          <tr>
+            <td><kbd>&#8592;</kbd></td>
+            <td class="action">Previous page</td>
+            <td><span class="mode-tag notes">Notes</span></td>
+          </tr>
+          <tr>
+            <td><kbd>&#8594;</kbd></td>
+            <td class="action">Next page</td>
+            <td><span class="mode-tag notes">Notes</span></td>
+          </tr>
+          <tr>
+            <td><kbd>L</kbd></td>
+            <td class="action">Cycle layout (Left / Right / Both)</td>
+            <td><span class="mode-tag notes">Notes</span></td>
+          </tr>
+          <tr>
+            <td><kbd>N</kbd></td>
+            <td class="action">Switch mode (Teleprompter &#8596; Notes)</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+          <tr>
+            <td><kbd>Esc</kbd></td>
+            <td class="action">Expand / Collapse window</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+          <tr>
+            <td><kbd>O</kbd></td>
+            <td class="action">Open file</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+          <tr>
+            <td><kbd>C</kbd></td>
+            <td class="action">Toggle text color (White / Yellow)</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+          <tr>
+            <td><kbd>B</kbd></td>
+            <td class="action">Cycle background (Light / Medium / Heavy)</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+          <tr>
+            <td><kbd>F</kbd></td>
+            <td class="action">Toggle full-width</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+          <tr>
+            <td><kbd>T</kbd></td>
+            <td class="action">Click-through (mouse passes through)</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+          <tr>
+            <td><kbd>+</kbd></td>
+            <td class="action">Increase window height</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+          <tr>
+            <td><kbd>-</kbd></td>
+            <td class="action">Decrease window height</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+          <tr>
+            <td><kbd>?</kbd></td>
+            <td class="action">Show welcome guide</td>
+            <td><span class="mode-tag both">Both</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ─── SPEED CUES ─── -->
+    <section class="guide-section reveal">
+      <h2>Speed <span class="accent">cues</span></h2>
+      <p class="section-desc">Add HTML comments in your markdown to control scroll speed. CueMate reads them as you scroll and adjusts pace automatically.</p>
+
+      <div class="cue-block">
+        <div class="cue-line">
+          <span class="cue-syntax">&lt;!-- slower --&gt;</span>
+          <span class="cue-sep">&mdash;</span>
+          <span class="cue-desc">0.5&times; speed</span>
+        </div>
+        <div class="cue-line">
+          <span class="cue-syntax">&lt;!-- slow --&gt;</span>
+          <span class="cue-sep">&mdash;</span>
+          <span class="cue-desc">0.7&times; speed</span>
+        </div>
+        <div class="cue-line">
+          <span class="cue-syntax">&lt;!-- normal --&gt;</span>
+          <span class="cue-sep">&mdash;</span>
+          <span class="cue-desc">1.0&times; (reset to default)</span>
+        </div>
+        <div class="cue-line">
+          <span class="cue-syntax">&lt;!-- fast --&gt;</span>
+          <span class="cue-sep">&mdash;</span>
+          <span class="cue-desc">1.4&times; speed</span>
+        </div>
+        <div class="cue-line">
+          <span class="cue-syntax">&lt;!-- faster --&gt;</span>
+          <span class="cue-sep">&mdash;</span>
+          <span class="cue-desc">2.0&times; speed</span>
+        </div>
+      </div>
+
+      <div class="cue-block">
+        <div class="cue-line">
+          <span class="cue-syntax">&lt;!-- speed 1.2 --&gt;</span>
+          <span class="cue-sep">&mdash;</span>
+          <span class="cue-desc">any numeric multiplier</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── PAUSE CUES ─── -->
+    <section class="guide-section reveal">
+      <h2>Pause <span class="accent">cues</span></h2>
+      <p class="section-desc">Pause the scroll for a set number of seconds. Great before key points or after section transitions.</p>
+
+      <div class="cue-block">
+        <div class="cue-line">
+          <span class="cue-syntax">&lt;!-- pause 2 --&gt;</span>
+          <span class="cue-sep">&mdash;</span>
+          <span class="cue-desc">pause for 2 seconds</span>
+        </div>
+        <div class="cue-line">
+          <span class="cue-syntax">&lt;!-- pause 3.5 --&gt;</span>
+          <span class="cue-sep">&mdash;</span>
+          <span class="cue-desc">pause for 3.5 seconds</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── PAGE BREAKS ─── -->
+    <section class="guide-section reveal">
+      <h2>Page breaks <span style="color:var(--amber)">(Notes mode)</span></h2>
+      <p class="section-desc">Use a horizontal rule to split your document into pages. Navigate with the Left and Right arrow keys.</p>
+
+      <div class="cue-block">
+        <div class="cue-line">
+          <span class="cue-syntax">---</span>
+          <span class="cue-sep">&mdash;</span>
+          <span class="cue-desc">splits document into pages in Notes mode</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── EXAMPLE ─── -->
+    <section class="guide-section reveal">
+      <h2>Example <span class="accent">markdown</span></h2>
+      <p class="section-desc">A complete script showing cues in context.</p>
+
+      <div class="example-block">
+        <div class="example-header">script.md</div>
+        <div class="example-code">
+          <div><span class="heading"># Quarterly Update</span></div>
+          <span class="blank"></span>
+          <div><span class="cue">&lt;!-- slow --&gt;</span></div>
+          <div><span class="text">Welcome everyone. Let's get started.</span></div>
+          <span class="blank"></span>
+          <div><span class="cue">&lt;!-- pause 2 --&gt;</span></div>
+          <span class="blank"></span>
+          <div><span class="heading">## Revenue</span></div>
+          <div><span class="cue">&lt;!-- fast --&gt;</span></div>
+          <div><span class="text">Q4 revenue hit $2.1M, up 34% YoY...</span></div>
+          <span class="blank"></span>
+          <div><span class="cue">&lt;!-- normal --&gt;</span></div>
+          <div><span class="text">The key takeaway is...</span></div>
+          <span class="blank"></span>
+          <div><span class="rule">---</span></div>
+          <span class="blank"></span>
+          <div><span class="heading">## Roadmap</span></div>
+          <div><span class="text">...next quarter we're focused on...</span></div>
+        </div>
+      </div>
+
+      <div class="inline-note">
+        <strong>Tip:</strong> Cues are invisible in the teleprompter — they only affect scroll behavior. You won't see them while presenting.
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div style="margin-bottom: 12px;">
+      <a href="https://github.com/hholen/cuemate/releases/latest/download/CueMate.dmg" class="btn btn-primary" style="font-size:13px;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v10m0 0l-3.5-3.5M8 11l3.5-3.5M2 14h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download for macOS
+      </a>
+    </div>
+    <div class="footer-brand">
+      <img src="holen-logo.png" alt="Holen Ventures">
+      <span>Built by <a href="https://holenventures.com" target="_blank" rel="noopener">Holen Ventures</a></span>
+    </div>
+    <span>&copy; 2026 Holen Ventures</span>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
