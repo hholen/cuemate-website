@@ -243,7 +243,42 @@
     .mockup-line:nth-child(4) { width: 78%; }
     .mockup-line:nth-child(5) { width: 60%; opacity: 0.7; }
     .mockup-cue { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--amber); opacity: 0.6; margin-bottom: 6px; }
-    .mockup-container { position: relative; }
+    .mockup-container { position: relative; cursor: pointer; }
+
+    .mockup-play-btn {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(0,0,0,0.55); border: 2px solid rgba(255,255,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 10; transition: all 0.25s ease;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .mockup-play-btn svg { margin-left: 3px; }
+    .mockup-container:hover .mockup-play-btn {
+      background: rgba(230,126,81,0.8); border-color: rgba(230,126,81,0.9);
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    .video-modal {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .video-modal.active { opacity: 1; pointer-events: auto; }
+    .video-modal-inner {
+      width: 90vw; max-width: 960px; aspect-ratio: 16/9;
+      border-radius: 12px; overflow: hidden; position: relative;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+    }
+    .video-modal-inner iframe { width: 100%; height: 100%; border: none; }
+    .video-modal-close {
+      position: absolute; top: -44px; right: 0;
+      background: none; border: none; color: var(--text-muted);
+      font-size: 14px; cursor: pointer; font-family: var(--mono);
+      transition: color 0.2s;
+    }
+    .video-modal-close:hover { color: var(--text); }
 
     .mockup-teleprompter .mockup-line { animation: scrollUp 4s ease-in-out infinite; }
     @keyframes scrollUp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
@@ -594,7 +629,10 @@
     </div>
     <div class="hero-mockup">
       <div class="mockup-wrapper">
-        <div class="mockup-container">
+        <div class="mockup-container" id="play-video">
+          <div class="mockup-play-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
+          </div>
           <div class="mockup-screen">
             <div class="mockup-call">
               <div class="mockup-participant"></div>
@@ -779,7 +817,34 @@
   </footer>
   </div>
 
+  <!-- Video modal -->
+  <div class="video-modal" id="video-modal">
+    <div class="video-modal-inner">
+      <button class="video-modal-close" id="video-modal-close">Esc to close</button>
+      <iframe id="video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+  </div>
+
   <script>
+    // Video modal
+    const videoModal = document.getElementById('video-modal');
+    const videoIframe = document.getElementById('video-iframe');
+    const videoSrc = 'https://www.youtube.com/embed/h4LAmPCBReQ?autoplay=1&rel=0';
+
+    document.getElementById('play-video').addEventListener('click', () => {
+      videoIframe.src = videoSrc;
+      videoModal.classList.add('active');
+    });
+
+    function closeVideoModal() {
+      videoModal.classList.remove('active');
+      videoIframe.src = '';
+    }
+
+    document.getElementById('video-modal-close').addEventListener('click', closeVideoModal);
+    videoModal.addEventListener('click', (e) => { if (e.target === videoModal) closeVideoModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && videoModal.classList.contains('active')) closeVideoModal(); });
+
     // Snap scrolling between sections
     const hint = document.getElementById('scroll-hint');
     const sections = [...document.querySelectorAll('.snap-section')];
