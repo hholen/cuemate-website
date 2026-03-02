@@ -25,11 +25,17 @@
   <div class="wrap">
     <h1>Your download is starting...</h1>
     <p>If it doesn't begin automatically, click below.</p>
-    <a href="/downloads/CueMate.dmg" class="manual">Download CueMate</a>
+    <a href="/downloads/CueMate.dmg" class="manual" download>Download CueMate</a>
+    <p style="margin-top:32px"><a href="/">&larr; Back to cuemate.co</a></p>
   </div>
   <script>
     setTimeout(function() {
-      window.location.href = '/downloads/CueMate.dmg';
+      var a = document.createElement('a');
+      a.href = '/downloads/CueMate.dmg';
+      a.download = '';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     }, 500);
   </script>
 </body>
