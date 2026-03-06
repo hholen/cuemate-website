@@ -1,0 +1,11 @@
+{
+  "version": "0.1.7",
+  "notes": "Auto-updater support",
+  "pub_date": "2026-03-06T00:00:00Z",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTWFVZQllGTm1aYkY0d01odENESTdRYTdCK2I1d2Q5bGtLTEdwVzBteDJGSEVMRjZQWjBaSCswVFp4NkJpSU9RNXR4ZlZ6MHVPV3BvbHJOQUIwQStKTGo3ZUlwZXoybEFVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyNzg2Mjc0CWZpbGU6Y3VlbWF0ZS5hcHAudGFyLmd6CnVTS0F0bHJaakdsODJmS2k0RVMvbGpSZW8xa3BjNWhweDlWM3NlOXpuK1VmTVdCRGlHVlJsaWErKy9hOUJ6TmtCZDdoNGswUmZIb2hLR2RrdGVxQUJnPT0K",
+      "url": "https://cuemate.co/downloads/cuemate.app.tar.gz"
+    }
+  }
+}
