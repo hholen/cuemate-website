@@ -1,10 +1,10 @@
 {
-  "version": "0.1.8",
+  "version": "0.1.9",
   "notes": "Markdown guide on welcome page, auto-updater support",
   "pub_date": "2026-03-08T00:00:00Z",
   "platforms": {
     "darwin-aarch64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTWFVZQllGTm1aYk9WUXMrcjh4akFaWW1wODFBVDBJL2pwVzNmSk5oUlZOYytId0FWWVRtVldrOXVlejN0d3F1KzlWS2F3NTFqUWZpTFlFcHRNQVE2NUVwR1Q0U2RTR1E4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyOTcwMjAwCWZpbGU6Y3VlbWF0ZS5hcHAudGFyLmd6Clh6VUJveXJvOXg4WVJVYTBCeFVubVdTL2tMaVE3S2lkSHRwSkk0eEg4RFFyZmxvTVNwTjV3Q29BelhTdWZpL296aFFyOG5FK29zMGEvN0puL0hZZkJRPT0K",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTWFVZQllGTm1aYktraHNPbm1ja1FPVzZZQmpKWjVWUFVudENmR1NpbFJVeWNZZFFjZXNSbEt4TDNYU21mNWN3VnZvRnJvQnorRnovOFA1SHVOYUdVNEc1VkdFV09uREFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcyOTcwNDc4CWZpbGU6Y3VlbWF0ZS5hcHAudGFyLmd6Cnl2ZzFwUGtFTDQ2OWVZLzNvN2hkQURNVk8yVGp5Z09vUWJ6czZQSXBFbUNNZTdPRWdnVGNOQTR2RmErSWRsRzBDb0RjSHdCM1VrWDluZjduMlJlZ0FnPT0K",
       "url": "https://cuemate.co/downloads/cuemate.app.tar.gz"
     }
   }
